@@ -1,12 +1,19 @@
+
 *{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+.main-bg{
+  min-height: 100vh;
+  display: flex;
+  flex: column;
+}
 .background-banner{
-  background-image: url("../public/BG.png");
+  background-image: url("/public/BG.png");
   background-size: cover;
-  height: 100vh;
+  height: 80vh;
+  width: 100vw;
 }
 .for-image-align{
   width: 100vw;
@@ -16,7 +23,8 @@
 }
 .bg{
   background-color: rgb(0, 0, 0);
-  height: 100vh;
+  min-height: 100vh; /* this ensures it covers the full visible page */
+  width: 100%;
 }
 .movie-banner{
   width: 400px;
@@ -44,8 +52,8 @@
   font-size: 60px;
   font-family: 'montserrat';
   color: white;
+  margin-bottom: 30px;
   text-align: center;
-  margin-bottom: 30px
 }
 .special-effect{
   color: rgb(0, 174, 255);
@@ -55,15 +63,23 @@
   text-align: center;
 }
 .heading{
+  color: white;
   font-family: 'montserrat';
   font-size: 35px;
 }
 .texts{
-  color: black;
+  color: rgb(255, 255, 255);
   font-size: 20px;
   font-family: 'helvetica';
 }
 .movie-list{
   height: 100vh;
   width: 100vw;
+}
+.card-title{
+  color: white;
+  font-family: montserrat;
+  font-weight: normal;
+  font-size: 13px;
+  text-align: center;
 }
