@@ -1,9 +1,11 @@
 import React, { useState,useEffect } from 'react'
+
 import './App.css'
 import MovieCard from './components/MovieCard';
 import Search from './components/Search'
 import { Spinner } from './components/Spinner';
 import { useDebounce } from 'react-use';
+import { getTrendingMovies, updateSearchCount } from './appwrite.js'
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const API_OPTIONS = {
@@ -20,6 +22,7 @@ const App = () => {
   const [moviesList, setmoviesList] = useState([]);
   const [isloading, setisloading] = useState(true);
   const [debounceTerm, setdebounceTerm] = useState('');
+  const [trendingMovies, setTrendingMovies] = useState([]);
 
   useDebounce(() => setdebounceTerm(searchTerm), 500, [searchTerm])
 
@@ -40,7 +43,10 @@ const App = () => {
         return;
       }
       setmoviesList(data.results)
-      console.log(data);
+      if(query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
+
     }catch(error){
       console.log(`Error found : ${Error}`);
       seterrorMessage('Error fetching movies, try again later');
@@ -48,6 +54,21 @@ const App = () => {
       setisloading(false)
     }
   }
+
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
+    }
+  }
+
+  useEffect(() => {
+    loadTrendingMovies();
+  }, []);
+
   useEffect(()=>{
     fetchmovies(debounceTerm);
   },[debounceTerm]);
@@ -66,12 +87,31 @@ const App = () => {
           
           <Search searchTerm={searchTerm}  setSearchTerm={setSearchTerm} />
           <br />
+          
           <p className='errormsg'>
             {errorMessage}
           </p>
         </div>
+        <div className="container trending-movies">
+            {trendingMovies.length > 0 && (
+              <div className="trending row">
+                <h2>Trending Movies</h2>
+
+                <ul>
+                  {trendingMovies.map((movie, index) => (
+                    <li key={movie.$id}>
+                      <p>{index + 1}</p>
+                      <img src={movie.poster_url} alt={movie.title} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         
         <div className="container movie-list">
+          <h2 className='mb-5'> Popular Movies</h2>
+
           <div className="row">
             {isloading ? (
               <Spinner />
